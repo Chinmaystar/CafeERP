@@ -21,9 +21,8 @@ const explicitAllowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
     .map((origin) => origin.trim())
     .filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
     origin: function (origin, callback) {
-        // allow requests with no origin (like mobile apps, curl)
         if (!origin) return callback(null, true);
 
         if (!isProduction) {
@@ -31,7 +30,7 @@ app.use(cors({
             return;
         }
 
-        if (explicitAllowedOrigins.includes(origin)) {
+        if (explicitAllowedOrigins.length === 0 || explicitAllowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             console.log("❌ Blocked by CORS:", origin);
@@ -39,7 +38,9 @@ app.use(cors({
         }
     },
     credentials: true
-}));
+};
+
+app.use(cors(corsOptions));
 
 // ✅ Body Parser
 app.use(express.json());
