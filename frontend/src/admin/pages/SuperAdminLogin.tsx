@@ -44,8 +44,8 @@ export default function SuperAdminLogin() {
         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
 
         <input
-          type="email"
-          placeholder="Email"
+          type="text"
+          placeholder="Email / Username"
           className="w-full mb-4 p-3 rounded-xl border"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
