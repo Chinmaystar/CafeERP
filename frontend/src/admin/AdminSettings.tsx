@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Copy, ExternalLink, Save, Trash2, Upload } from 'lucide-react';
+import { Check, Copy, ExternalLink, Save, Trash2, Upload } from 'lucide-react';
 import API from '../lib/api';
 import { useAuth } from '../context/AuthContext';
 
@@ -43,6 +43,7 @@ export default function AdminSettings() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [origin, setOrigin] = useState('');
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState('https://placehold.co/200x200/png');
 
@@ -102,11 +103,12 @@ export default function AdminSettings() {
   );
   const cafePublicUrl = origin ? `${origin}/access/restaurant/${form.accessKey}` : `/access/restaurant/${form.accessKey}`;
 
-  const copyLink = async (url: string) => {
+  const copyLink = async (url: string, key: string) => {
     try {
       await navigator.clipboard.writeText(url);
       setError('');
-      setMessage('Public URL copied.');
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 1000);
     } catch {
       setError('Failed to copy URL');
     }
@@ -260,11 +262,11 @@ export default function AdminSettings() {
           <div className="mt-3 flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => copyLink(cafePublicUrl)}
+              onClick={() => copyLink(cafePublicUrl, 'cafe')}
               className="inline-flex items-center gap-2 rounded-2xl border border-outline/10 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-on-surface"
             >
-              <Copy size={14} />
-              Copy Cafe URL
+              {copiedKey === 'cafe' ? <Check size={14} /> : <Copy size={14} />}
+              {copiedKey === 'cafe' ? 'Copied' : 'Copy Cafe URL'}
             </button>
             <a
               href={cafePublicUrl}
@@ -286,11 +288,11 @@ export default function AdminSettings() {
                 <p className="text-sm font-headline font-bold text-on-surface">Final Public Table URLs</p>
                 <button
                   type="button"
-                  onClick={() => copyLink(allTableUrls)}
+                  onClick={() => copyLink(allTableUrls, 'all')}
                   className="inline-flex items-center gap-2 rounded-2xl border border-outline/10 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-on-surface"
                 >
-                  <Copy size={14} />
-                  Copy All URLs
+                  {copiedKey === 'all' ? <Check size={14} /> : <Copy size={14} />}
+                  {copiedKey === 'all' ? 'Copied' : 'Copy All URLs'}
                 </button>
               </div>
               <textarea
@@ -315,11 +317,11 @@ export default function AdminSettings() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => copyLink(table.publicUrl)}
+                    onClick={() => copyLink(table.publicUrl, `table-${table.publicTableId}`)}
                     className="inline-flex items-center gap-2 rounded-2xl border border-outline/10 bg-white px-3 py-2 text-xs font-bold uppercase tracking-widest text-on-surface"
                   >
-                    <Copy size={14} />
-                    Copy URL
+                    {copiedKey === `table-${table.publicTableId}` ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedKey === `table-${table.publicTableId}` ? 'Copied' : 'Copy URL'}
                   </button>
                   <a
                     href={table.publicUrl}
