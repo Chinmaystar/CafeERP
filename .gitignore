@@ -1,0 +1,102 @@
+# =========================
+# Node modules
+# =========================
+node_modules/
+package-lock.json
+bun.lock
+!backend/bun.lock
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+*.err
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+.AppleDouble
+.LSOverride
+
+# =========================
+# IDE files
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Build folders
+# =========================
+dist/
+build/
+out/
+
+# =========================
+# Framework-specific
+# =========================
+.next/
+.vite/
+
+# =========================
+# Dependency caches
+# =========================
+.pnp/
+.pnp.js
+
+# =========================
+# Testing
+# =========================
+coverage/
+test-results/
+playwright-results.json
+
+# =========================
+# Cache / Temp files
+# =========================
+.cache/
+*.tmp
+*.temp
+.eslintcache
+
+# =========================
+# Runtime files
+# =========================
+pids/
+*.pid
+*.pid.lock
+*.seed
+
+# =========================
+# Uploads (if storing locally)
+# =========================
+uploads/
+public/uploads/
+tmp/
+temp/
+
+# =========================
+# Database files
+# =========================
+*.sqlite
+*.db
+
+# =========================
+# Deployment
+# =========================
+.vercel/
+.render/
