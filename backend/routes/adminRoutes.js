@@ -13,7 +13,7 @@ const {
   updateOrderStatus,
 } = require("../controller/adminController");
 const { getCurrentRestaurant, updateCurrentRestaurant } = require("../controller/restaurantController");
-const { getAdminFeedback } = require("../controller/feedbackController");
+const { getAdminFeedback, deleteFeedback } = require("../controller/feedbackController");
 const { getRecentPaymentLogs } = require("../controller/paymentController");
 
 const router = express.Router();
@@ -22,6 +22,7 @@ router.get("/dashboard", protect, adminOnly, getDashboard);
 router.get("/restaurant/me", protect, adminOnly, getCurrentRestaurant);
 router.patch("/restaurant/me", protect, adminOnly, upload.single("logoFile"), updateCurrentRestaurant);
 router.get("/feedback", protect, adminOnly, getAdminFeedback);
+router.delete("/feedback/:id", protect, adminOnly, deleteFeedback);
 router.get("/payments/logs", protect, adminOnly, getRecentPaymentLogs);
 
 router.get("/weekly-sales", protect, adminOnly, getWeeklySales);

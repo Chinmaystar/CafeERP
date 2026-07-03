@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MessageSquareText, Star } from "lucide-react";
+import { MessageSquareText, Star, Trash2 } from "lucide-react";
 
 import API from "../lib/api";
 import PaginationControls from "../components/PaginationControls";
@@ -37,6 +37,7 @@ export default function AdminFeedback() {
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState<PaginationMeta>(createPaginationState(10));
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const loadFeedback = async (pageNumber = page, limitNumber = pagination.limit) => {
     try {
@@ -57,6 +58,20 @@ export default function AdminFeedback() {
       setFeedback([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Delete this feedback entry? This cannot be undone.")) return;
+    try {
+      setDeletingId(id);
+      setError("");
+      await API.delete(`/admin/feedback/${id}`);
+      setFeedback((prev) => prev.filter((item) => item._id !== id));
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to delete feedback");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -96,15 +111,25 @@ export default function AdminFeedback() {
                   <p className="font-headline font-bold text-on-surface">{item.user?.name || "Customer"}</p>
                   <p className="text-xs text-secondary">{item.user?.email || "No email available"}</p>
                 </div>
-                <div className="text-right">
-                  <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                    <Star size={14} className="fill-current" />
-                    {item.rating}/5
+                  <div className="flex items-start gap-3">
+                    <div className="text-right">
+                      <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                        <Star size={14} className="fill-current" />
+                        {item.rating}/5
+                      </div>
+                      <p className="mt-2 text-xs text-secondary">
+                        {new Date(item.createdAt).toLocaleString()}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(item._id)}
+                      disabled={deletingId === item._id}
+                      className="mt-1 rounded-xl p-2 text-secondary transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
+                      title="Delete feedback"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
-                  <p className="mt-2 text-xs text-secondary">
-                    {new Date(item.createdAt).toLocaleString()}
-                  </p>
-                </div>
               </div>
 
               <div className="rounded-2xl bg-surface-container-low p-4 text-sm text-on-surface">

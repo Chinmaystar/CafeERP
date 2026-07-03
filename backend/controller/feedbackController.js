@@ -128,6 +128,38 @@ exports.getAdminFeedback = async (req, res) => {
   }
 };
 
+exports.deleteFeedback = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "Feedback ID is required" });
+    }
+
+    const feedback = await Feedback.findById(id);
+
+    if (!feedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+    if (req.user?.role !== "superadmin") {
+      const { restaurantId } = await ensureRestaurantForUser(req);
+      const feedbackRestaurantId = String(feedback.restaurantId || feedback.orderId?.restaurantId || "");
+      const userRestaurantId = String(restaurantId || "");
+
+      if (!userRestaurantId || feedbackRestaurantId !== userRestaurantId) {
+        return res.status(403).json({ message: "You can only delete feedback for your own restaurant" });
+      }
+    }
+
+    await Feedback.findByIdAndDelete(id);
+
+    res.json({ message: "Feedback deleted successfully" });
+  } catch (error) {
+    res.status(error.status || 500).json({ message: error.message });
+  }
+};
+
 exports.getOrderFeedback = async (req, res) => {
   try {
     if (req.user?.role !== 'user') {
